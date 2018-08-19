@@ -1,0 +1,27 @@
+v0.0.12
+=======
+
+FIRST RELEASE
+* Support for chrome, firefox.
+* Added options to start Chrome in headless mode (headless mode for firefox in later release)
+* Added Interactive implementation of EventFiringWebDriver for logging.
+* Selenium Utility, ElementHelper, WaitHelper etc
+* ScreenShotListner to capture screenshot in case of test failure.
+* Extended AjaxElementLocator to override ElementUsability criteria for �found�
+* Using selenium v3.4.0
+* BaseTest to statically instantiate DriverFactory, WebDriver and EventFiringWebDriver.
+
+v0.0.14
+=======
+* Fix for Chrome Headless mode.
+* Some trivial changes for better code re-usability and logging
+
+v1.0.0
+=======
+* Add locators for respective element in logs for better debugging.
+* Implement Selenium Grid and integrate in framework(beta)
+
+v1.0.2
+======
+* Expose wait time as system property to make it customizable
+* Add repositoryMap.xml for driver downloads
