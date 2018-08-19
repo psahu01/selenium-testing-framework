@@ -1,0 +1,247 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- ====================================================================== -->
+	<!-- P R O J E C T D E S C R I P T I O N -->
+	<!-- ====================================================================== -->
+	<groupId>com.adobe.qe</groupId>
+	<artifactId>selenium-parent</artifactId>
+	<version>0.0.9-SNAPSHOT</version>
+	<packaging>pom</packaging>
+
+	<!-- ====================================================================== -->
+	<!-- P R O P E R T I E S -->
+	<!-- ====================================================================== -->
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+		<!-- Dependencies & plugin versions -->
+		<selenium.version>3.4.0</selenium.version>
+		<testng.version>6.8.3</testng.version>
+		<maven-failsafe-plugin.version>2.19.1</maven-failsafe-plugin.version>
+		<jsonschema2pojo.version>0.5.1</jsonschema2pojo.version>
+		<selenium-framework.version>1.0.3-SNAPSHOT</selenium-framework.version>
+
+		<!-- Project Properties -->
+		<author.hostname>localhost</author.hostname>
+		<author.port>4502</author.port>
+		<publish.hostname>localhost</publish.hostname>
+		<publish.port>4503</publish.port>
+		<browser>chrome</browser>
+		<testng.groups>regression</testng.groups>
+		<headless>false</headless>
+		<customRepositoryMapPath>${project.build.directory}</customRepositoryMapPath>
+	</properties>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.adobe.qe</groupId>
+				<artifactId>selenium-framework</artifactId>
+				<version>${selenium-framework.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.jsonschema2pojo</groupId>
+				<artifactId>jsonschema2pojo-core</artifactId>
+				<version>${jsonschema2pojo.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.seleniumhq.selenium</groupId>
+				<artifactId>selenium-java</artifactId>
+				<version>${selenium.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.seleniumhq.selenium</groupId>
+				<artifactId>selenium-server</artifactId>
+				<version>${selenium.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.testng</groupId>
+				<artifactId>testng</artifactId>
+				<version>${testng.version}</version>
+				<scope>compile</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>com.adobe.qe</groupId>
+			<artifactId>selenium-framework</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.jsonschema2pojo</groupId>
+			<artifactId>jsonschema2pojo-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>21.0</version>
+		</dependency>
+	</dependencies>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+			</plugin>
+		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<configuration>
+						<source>1.8</source>
+						<target>1.8</target>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>build-helper-maven-plugin</artifactId>
+					<version>3.0.0</version>
+					<executions>
+						<execution>
+							<id>add-source</id>
+							<phase>generate-sources</phase>
+							<goals>
+								<goal>add-source</goal>
+							</goals>
+							<configuration>
+								<sources>
+									<source>target/generated-resources</source>
+								</sources>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.jsonschema2pojo</groupId>
+					<artifactId>jsonschema2pojo-maven-plugin</artifactId>
+					<version>${jsonschema2pojo.version}</version>
+					<configuration>
+						<sourceType>jsonschema</sourceType>
+						<annotationStyle>gson</annotationStyle>
+						<includeJsr303Annotations>true</includeJsr303Annotations>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>generate</goal>
+							</goals>
+							<configuration>
+								<targetVersion>1.8</targetVersion>
+								<targetPackage>com.adobe.qe.testdata</targetPackage>
+								<outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+								<sourceDirectory>${basedir}/src/test/resources/jsonSchema</sourceDirectory>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>com.lazerycode.selenium</groupId>
+					<artifactId>driver-binary-downloader-maven-plugin</artifactId>
+					<version>1.0.14</version>
+					<configuration>
+						<customRepositoryMap>${customRepositoryMapPath}/repositoryMap.xml</customRepositoryMap>
+						<!-- Where you want to store binaries files -->
+						<rootStandaloneServerDirectory>${project.basedir}/src/test/drivers/selenium_standalone_binaries</rootStandaloneServerDirectory>
+						<!-- Where you want to store downloaded zip files -->
+						<downloadedZipFileDirectory>${project.basedir}/src/test/drivers/selenium_standalone_zips</downloadedZipFileDirectory>
+						<operatingSystems>
+							<windows>true</windows>
+							<linux>true</linux>
+							<mac>false</mac>
+						</operatingSystems>
+						<!-- Download 32bit binaries -->
+						<thirtyTwoBitBinaries>true</thirtyTwoBitBinaries>
+						<!-- Download 64bit binaries -->
+						<sixtyFourBitBinaries>true</sixtyFourBitBinaries>
+						<fileDownloadRetryAttempts>2</fileDownloadRetryAttempts>
+						<onlyGetLatestVersions>true</onlyGetLatestVersions>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>selenium</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-failsafe-plugin</artifactId>
+					<version>${maven-failsafe-plugin.version}</version>
+					<configuration>
+						<!-- <groups>${testng.groups}</groups> -->
+						<!-- <parallel>methods</parallel> -->
+						<!-- <threadCount>${threads}</threadCount> -->
+						<systemPropertyVariables>
+							<author.hostname>${author.hostname}</author.hostname>
+							<author.port>${author.port}</author.port>
+							<publish.hostname>${publish.hostname}</publish.hostname>
+							<publish.port>${publish.port}</publish.port>
+							<browser>${browser}</browser>
+							<downloadFilePath>${project.build.directory}/downloaded-files</downloadFilePath>
+							<screenshotDirectory>${project.build.directory}/screenshots</screenshotDirectory>
+							<headless>${headless}</headless>
+							<!--Set properties passed in by the driver binary downloader -->
+							<webdriver.chrome.driver>${webdriver.chrome.driver}</webdriver.chrome.driver>
+							<webdriver.gecko.driver>${webdriver.gecko.driver}</webdriver.gecko.driver>
+						</systemPropertyVariables>
+					</configuration>
+					<executions>
+						<execution>
+							<goals>
+								<goal>integration-test</goal>
+								<!--This goal makes the build fail if you have test failures -->
+								<goal>verify</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<executions>
+						<execution>
+							<id>resource-dependencies</id>
+							<phase>process-resources</phase>
+							<goals>
+								<goal>unpack-dependencies</goal>
+							</goals>
+							<configuration>
+								<type>jar</type>
+								<includeArtifactIds>selenium-framework</includeArtifactIds>
+								<includes>**/*.xml</includes>
+								<excludes>**/*pom.xml</excludes>
+								<!-- <outputDirectory>${project.build.outputDirectory}</outputDirectory> -->
+								<outputDirectory>${customRepositoryMapPath}</outputDirectory>
+							</configuration>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<!-- ====================================================================== -->
+	<!-- S C M D E S C R I P T I O N -->
+	<!-- ====================================================================== -->
+	<scm>
+		<connection>scm:git:git@git.corp.adobe.com:livecycle/forms-qe-scripts.git</connection>
+		<url>https://git.corp.adobe.com/livecycle/forms-qe-scripts.git</url>
+		<developerConnection>scm:git:git@git.corp.adobe.com:livecycle/forms-qe-scripts.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+	<distributionManagement>
+		<snapshotRepository>
+			<id>dev-snapshots</id>
+			<name>Adobe Dev Snapshots</name>
+			<url>https://artifactory.corp.adobe.com/artifactory/maven-aemforms-dev-snapshot-local</url>
+		</snapshotRepository>
+		<repository>
+			<id>releases</id>
+			<name>Adobe Releases</name>
+			<url>https://artifactory.corp.adobe.com/artifactory/maven-aemforms-release-local</url>
+		</repository>
+	</distributionManagement>
+</project>

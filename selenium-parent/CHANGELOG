@@ -1,0 +1,21 @@
+v0.0.2
+======
+FIRST RELEASE
+* Using selenium-framework v0.0.12
+* Plugins for converting json schema to Pojo, downloading driver binaries and failsafe for running integration tests.
+* Added project properties to run tests on author and publish.
+
+v0.0.4
+======
+* Using selenium-framework v0.0.14
+* Removing main/test resource filtering
+* Upgrading jsonschem2pojo to v0.5.1
+
+v0.0.6
+======
+* Using selenium-framework v1.0.0
+
+V0.0.8
+======
+* Using selenium-framework v1.0.2
+* Copy repositoryMap.xml from selenium-framework dependency.
